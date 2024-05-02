@@ -1,0 +1,157 @@
+# What is Terraform?
+Insfrastructure as code tool by Hashicorp
+Cloud agnostic, can work in AWS, Azure, & GCP
+It's a provisioning tool
+
+# Hashicorp's definition of Terraform
+I'ts a tool for builiding, changing, and versioning safely and efficiently.
+
+# Declaritive
+You define the end state & the tool decideds how to get there
+
+# Terraform Architecture
+Terraform Core (State & Config) -> Providers -> Cloud Resources
+
+# Install Terraform
+brew install terraform
+
+# Select a Terraform Cloud workspace
+terraform workspace select <work-space-name>
+
+# Terraform Commands
+terraform init -> Initialises the back end
+terraform plan -> 
+    Creates an execution plan that will be used to provision resources
+    Checks for differences between the desired state (Terraform Config) and the actual one (Terraform State)
+terraform apply -> Creates the resources using the plan
+terraform destroy -> Rolls back everything
+
+# Terraform State File
+JSON file containing info about every resource and data object
+Houses Terraform's representation of the world
+Contains sensetive info
+Can be stored locally or remotely (S3 or Terraform Cloud)
+
+# Benefits of Remote Backend
+Encryption of sensetive data
+Makes collaboration possible
+Can introduce automation
+
+# Terraform Cloud (Managed Backend Service)
+Keeps track of your workspace remotely
+Free up to 5 users
+
+# Remote Backend (AWS)
+S3 -> Storage
+DynamoDB -> Used for locking
+
+
+# Variables
+
+Input Variables (var.<name>)
+
+Local Variables (local.<name>)
+
+Output Variables
+
+# Setting Input Variables (In order of precedence, low to high)
+Manual entry during plan/apply
+Default value in declaration block
+TF_VAR_<name> environment variables
+terraform.tfvars file
+*.auto.tfvars file
+Command line -var or -var-file
+
+# Variable Types
+Primitives - string, number, bool
+Complext - list, set, map, object, tuple
+
+# Expressions
+Template strings ("foo ${var.bar}")
+Operators (!,-, *, /, %, >, ==, etc)
+Conditionals (condition ? true : false)
+For ([for i in var.list : i.id])
+Splat (var.list[*].id)
+Dynamic Blocks
+Constraints (Type & Version)
+
+# Functions
+Numeric
+String
+Collection
+Filesystem
+Date & Time
+Hash & Crypto
+IP Network
+Type Conversion
+
+
+# Meta-Arguments
+depends_on - Lets terraform know about a resource dependancy
+Count - Provisions multiple copies of resources
+for_each - Loops through resources
+Lifecycle - Lets terraform know how to handle a resource during it's Lifecycle
+    - create_before_destroy
+    - ignore_changes: Stops terraform from trying to revert metadata being set somewhere else
+    - prevent_destroy: Rejects any plan which would destroy a resource
+
+# Provisioners
+Help to perform an action on local or remote machine
+Examples are Ansible, Chef, and Puppet
+
+# Modules
+Containers for multiple resources that are used together.
+Consists of a collection of .tf and or .tf.json files kept together in a directory
+Main way to package and reuse resource configurations with terraform
+Root Module - Default module containing all .ft files in one directory
+Child Module - External module referred t ofrom a .tf file
+
+Module Paths
+# local path
+module "web-app" {
+    source = "../web-app"
+}
+
+# terraform registry
+module "consul" {
+    source = "hashicorp/consul/aws"
+    version = "0.1.0"
+}
+
+# github - SSH
+module "example" {
+    source = "git@github.com:hashicorp/example.git"
+}
+
+# module with input variables
+module "web-app" {
+    source = "../web-app"
+    # input variables
+    bucket_name = "my-bucket"
+    domain = "example.com"
+    db_user = "foo"
+    db_pass = var.db_pass
+}
+
+# Managing Multiple Environmnent (dev, test, prod)
+Workspaces - Multiple named sections within a single Backend
+File Structure - Directory layout that provides separation
+
+
+# Checking or Testing Terraform
+
+# Built-in Static Checking
+terraform fmt - Formats your terraform code
+terraform fmt --check - Checks if the formating is correct
+terraform validate - Checks if the config is valid
+terraform plan - Checks diff btw config and desired state
+custom validation rules
+
+# 3rd-party static checking
+tflint
+terraform sentinal
+checkov
+
+# Testing
+Terratest
+Use bash script

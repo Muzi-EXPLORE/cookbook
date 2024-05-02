@@ -182,7 +182,7 @@ htop -> view system resource usage (cores, memory, etc)
 conda create --name=venv_name python numpy pandas==0.25.1 etc
 
 # Activate Virtual Environment
-conda activate venv_name
+conda activate venv_name 
 
 # Deactivate Virtual Environment
 conda deactivate
